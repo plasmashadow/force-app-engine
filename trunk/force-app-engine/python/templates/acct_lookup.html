@@ -1,6 +1,22 @@
 <html>
 <head>
 	<link rel="stylesheet" type="text/css" href="/css/styles.css"/>
+	<script src="js/prototype-1.6.0.3.js"></script>
+	<script>
+		function showAccountInfo(id) {
+			var theAccount = accountInfo[id];
+			$('accountInfoPanel').show();
+			$('idOutput').innerHTML = id;
+			$('nameOutput').innerHTML = theAccount.name;
+			$('phoneOutput').innerHTML = theAccount.phone;
+			$('websiteOutput').innerHTML = theAccount.website;
+		}
+	</script>
+	<style>
+		.outputData {
+			font-family: Courier;
+		}
+	</style>
 </head>
 <body>
 	<span class="title">Account Lookup Sample</span>
@@ -11,17 +27,17 @@
 		<table>
 			<tr>
 				<td>Username:</td>
-				<td><input type="text" name="uid"/></td>
+				<td><input type="text" name="uid" value="{{ username }}"/></td>
 			</tr>
 			<tr>
 				<td>Password:</td>
-				<td><input type="password" name="pwd"/></td>
+				<td><input type="password" name="pwd" value="{{ password }}"/></td>
 			</tr>
 		</table>
 		<p/>
 		<span class="heading">Enter an account name:</span>
 		<p/>
-		<input type="text" size="30"/>
+		<input type="text" name="account" value="{{ accountName }}"/>
 		&nbsp
 		<input type="submit" value="Lookup"/>
 		&nbsp 
@@ -32,8 +48,27 @@
 	<p/>
 	{% endif %}
 	{% for acct in accounts %}
-		{{ acct.Name }}
+		{{ acct.Name }} <a href="javascript:showAccountInfo('{{ acct.Id }}')">[View Info]</a>
 		<br/>
 	{% endfor %}
+	<p/>
+	<script>
+		var accountInfo = {
+	{% for acct in accounts %}
+			'{{ acct.Id }}': {name:'{{ acct.Name }}', phone:'{{ acct.Phone }}', website:'{{ acct.WebSite }}'},
+	{% endfor %}
+			}
+	</script>
+	<div id="accountInfoPanel" style="display:none; background-color:#dddddd; border:solid; border-color:#888888; padding:20px">
+		<span class="heading">Account Info:</span>
+		<p/>
+		Name: <span class="outputData" id="nameOutput"></span>
+		<br/>
+		ID: <span class="outputData" id="idOutput"></span>
+		<br/>
+		Phone: <span class="outputData" id="phoneOutput"></span>
+		<br/>
+		Web Site: <span class="outputData" id="websiteOutput"></span>
+	</div>
 </body>
 </html>

@@ -33,11 +33,15 @@ class AcctLookupHandler(RequestHandler):
 		cookie['surl'] = login_result['serverUrl']
 		
 		# Query for accounts	
-		query_result = self.sforce.query("SELECT Id, Name FROM Account WHERE Name='%" + 
-			accountName + "%'")
+		query_result = self.sforce.query("SELECT Id, Name, Phone, WebSite FROM Account WHERE Name LIKE '%" + 
+										 accountName + "%'")
 		records = query_result['records']
 		
 		# Render the output
+		template_values = {'accounts': records,
+						   'username': username,
+						   'password': password,
+						   'accountName': accountName};
 		path = os.path.join(os.path.dirname(__file__), 'templates/acct_lookup.html')
-		self.response.out.write(template.render(path, {'accounts': records}))
+		self.response.out.write(template.render(path, template_values))
 		
