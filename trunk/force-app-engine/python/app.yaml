@@ -1,0 +1,16 @@
+application: sforce-demo
+version: 1
+runtime: python
+api_version: 1
+
+handlers:
+- url: /static
+  static_dir: static
+  mime_type: text/html
+  
+- url: /css
+  static_dir: css
+  mime_type: text/css
+    
+- url: /.*
+  script: main.py
