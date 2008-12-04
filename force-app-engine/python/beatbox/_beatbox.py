@@ -349,7 +349,8 @@ class SoapEnvelope:
         # logging.info(result.headers); 
         if result.headers.has_key('content-encoding') and result.headers['content-encoding'] == 'gzip':
             rawResponse = gzip.GzipFile(fileobj=StringIO(rawResponse)).read()
-        logging.info(rawResponse)
+# slow?
+#        logging.info(rawResponse)
         tramp = xmltramp.parse(rawResponse)
         try:
             faultString = str(tramp[_tSoapNS.Body][_tSoapNS.Fault].faultstring)
