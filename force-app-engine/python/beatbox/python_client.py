@@ -227,6 +227,7 @@ class Client(BaseClient):
         type_data = self.describeSObjects(sObjectType)[0]
         
         data = dict()
+        data['type'] = sObjectType
         myfields = fieldsList(r)
         for fname in myfields:
             try : 
