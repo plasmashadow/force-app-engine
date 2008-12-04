@@ -11,19 +11,83 @@ from google.appengine.ext.webapp import RequestHandler
 class UnitTestHandler(RequestHandler):
 	def get(self):
 		op = self.request.get('op')
-		if (op == '' ):
+		sid = self.request.get('sid')
+		logging.info( sid)
+		
+		if (sid == '' or sid == None):
 			self.redirect('/static/unit_test_login.html')
-	
+			return 
+		
+		if ( op == '' ):
+			
+			logging.info(memcache.get('userInfo'))
+			unifo = memcache.get('userInfo')
+			template_values = {'user_id': unifo.get('userId'),
+			               'server_url':  memcache.get("serverUrl") ,
+			               'session_id': sid};
+			path = os.path.join(os.path.dirname(__file__), 'templates/unit_test.html')
+			self.response.out.write(template.render(path, template_values))
+			return
+		
 		client = Client()
 		
 		if (op == 'query'): 
 			soql = 'select name from Account limit 12'
 			self.response.out.write('<b>'+soql+'</b>')   
-			qr = client.query( soql )
-			logging.info( qr )
-			records = qr['records']
-			for r in records : 	self.response.out.write('<li>' + r['Name'] )   
-		
+			
+			query_result = client.query( soql )
+			for account in query_result['records'] : 	
+				self.response.out.write('<li>' + account['Name'] )   
+			
+			
+		if (op == 'login'):
+			login_result = client.login( memcache.get('username'),
+										 memcache.get('password') )
+			self.response.out.write( login_result )
+			
+			
+		if (op == 'create'):
+			sobjects = []
+			new_acc = { 'type': 'Account', 'name' : 'new GAE account' }
+			sobjects.append(new_acc)
+			results = client.create(sobjects)
+			self.response.out.write( results )
+			
+			
+		if (op == 'delete'):
+			query_result = client.query( "select id from Account where name like 'new GAE account%' limit 1")
+			accounts = []
+			for account in query_result['records'] :
+				accounts.append( account['Id'] )
+			
+			if ( accounts.__len__() < 1 ): 
+				self.response.out.write('no account found with name : new GAE account ')
+			else 	:
+				results = client.delete( accounts )
+				self.response.out.write( results )
+			
+			
+		if ( op == 'update'):
+			query_result = client.query( "select id from Account where name like 'new GAE account%' limit 1")
+			
+			if ( query_result['records'].__len__() < 1 ): 
+				self.response.out.write('no account found with name : new GAE account ')
+			else 	:
+				account = query_result['records'][0]
+				self.response.out.write( account )
+				
+				account['Name'] = 'new GAE account UPDATED'
+				# before we can update an object, we must apply the object type 
+				# this is required, and not found in the query result at this time
+				# add it here 
+				account['type'] = 'Account'
+				
+				results = client.update( account )
+				
+				self.response.out.write( results )
+						
+		# add a back link
+		self.response.out.write('<p /><b><a href="/unittest?sid='+memcache.get("sessionId")+'">back</a></b>' )
 		
 	def post(self):
 		# Retrieve username and password from post data
@@ -57,10 +121,13 @@ def verifyLogin(self):
     """
     username = self.request.get('uid')
     password = self.request.get('pwd')
+    memcache.set_multi({ 'username':username, 'password':password})
     self.sforce = beatbox.PythonClient()
     login_result = None
     try:
+    	
 	    login_result = self.sforce.login(username, password)
+	    
     except beatbox.SoapFaultError, errorInfo:
 		memcache.set_multi( {'errorCode': errorInfo.faultCode, 
                              'errorString': errorInfo.faultString})
@@ -73,7 +140,7 @@ def verifyLogin(self):
 						   	'sessionId': login_result['sessionId'], 
 			                'serverUrl': login_result['serverUrl'],
 			                'metadataServerUrl' : login_result['metadataServerUrl'],
-			                'userInfo': login_result['userInfo']} , time=3600)       
+			                'userInfo': login_result['userInfo']} , time=36000)       
   
     logging.info( memcache.get("sessionId") )
     logging.info( memcache.get("serverUrl") )

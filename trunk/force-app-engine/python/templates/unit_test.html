@@ -14,7 +14,11 @@ your session details:</span>
 
 <span class="fixedWidth">Session Id: {{ session_id }}</span>
 
-<li><a href="/unittest?op=query">Query Accounts</a>
+<li><a href="/unittest?op=login&sid={{ session_id }}">Login</a></li>
+<li><a href="/unittest?op=query&sid={{ session_id }}">Query Accounts</a></li>
+<li><a href="/unittest?op=create&sid={{ session_id }}">Create Account</a></li>
+<li><a href="/unittest?op=delete&sid={{ session_id }}">Delete Account</a></li>
+<li><a href="/unittest?op=update&sid={{ session_id }}">Update Account</a></li>
 
 </body>
 </html>
