@@ -1,15 +1,15 @@
 <html>
 <head>
 	<link rel="stylesheet" type="text/css" href="/css/styles.css"/>
-	<script src="js/prototype-1.6.0.3.js"></script>
 	<script>
 		function showAccountInfo(id) {
 			var theAccount = accountInfo[id];
-			$('accountInfoPanel').show();
-			$('idOutput').innerHTML = id;
-			$('nameOutput').innerHTML = theAccount.name;
-			$('phoneOutput').innerHTML = theAccount.phone;
-			$('websiteOutput').innerHTML = theAccount.website;
+			var accountInfoPanel = document.getElementById('accountInfoPanel');
+			accountInfoPanel.style.display = '';
+			document.getElementById('idOutput').innerHTML = id;
+			document.getElementById('nameOutput').innerHTML = theAccount.name;
+			document.getElementById('phoneOutput').innerHTML = theAccount.phone;
+			document.getElementById('websiteOutput').innerHTML = theAccount.website;
 		}
 	</script>
 	<style>
@@ -59,7 +59,7 @@
 	{% endfor %}
 			}
 	</script>
-	<div id="accountInfoPanel" style="display:none; background-color:#dddddd; border:solid; border-color:#888888; padding:20px">
+	<div id="accountInfoPanel" style="display:none; background-color:#e4e4e4; border:solid; border:1px solid #999999; padding:10px">
 		<span class="heading">Account Info:</span>
 		<p/>
 		Name: <span class="outputData" id="nameOutput"></span>
