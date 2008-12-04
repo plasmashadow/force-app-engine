@@ -2,7 +2,6 @@
 
 import os
 import beatbox
-import Cookie
 
 from google.appengine.ext.webapp import template
 from google.appengine.ext.webapp import RequestHandler
@@ -26,12 +25,7 @@ class AcctLookupHandler(RequestHandler):
 			self.response.out.write(template.render(path, {'errorCode': errorInfo.faultCode, 
 			                                               'errorString': errorInfo.faultString}))
 			return
-		
-		# Store session information in cookies
-		cookie = Cookie.SimpleCookie()
-		cookie['sid'] = login_result['sessionId']
-		cookie['surl'] = login_result['serverUrl']
-		
+				
 		# Query for accounts	
 		query_result = self.sforce.query("SELECT Id, Name, Phone, WebSite FROM Account WHERE Name LIKE '%" + 
 										 accountName + "%'")
