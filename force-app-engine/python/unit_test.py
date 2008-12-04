@@ -3,6 +3,8 @@
 import os
 import beatbox
 
+from datetime import datetime
+
 import logging
 from google.appengine.api import memcache
 from google.appengine.ext.webapp import template
@@ -106,6 +108,18 @@ class UnitTestHandler(RequestHandler):
 				results = client.retrieve( 'Name,Id','Account', accounts )
 				self.response.out.write( results )
 				
+		if ( op == 'getDeleted' ): 
+			now = datetime.now()
+			then = datetime(now.year, now.month, now.day-1 )
+			results = client.getDeleted('Account', then, now )
+			self.response.out.write( results )
+
+		if ( op == 'getUpdated' ): 
+			now = datetime.now()
+			then = datetime(now.year, now.month, now.day-1 )
+			results = client.getUpdated('Account', then, now )
+			self.response.out.write( results )
+			
 		# add a back link
 		self.response.out.write('<p /><b><a href="/unittest?sid='+memcache.get("sessionId")+'">back</a></b>' )
 		
