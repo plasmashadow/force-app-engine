@@ -77,15 +77,35 @@ class UnitTestHandler(RequestHandler):
 				self.response.out.write( account )
 				
 				account['Name'] = 'new GAE account UPDATED'
-				# before we can update an object, we must apply the object type 
-				# this is required, and not found in the query result at this time
-				# add it here 
-				account['type'] = 'Account'
 				
 				results = client.update( account )
-				
 				self.response.out.write( results )
-						
+		
+		if (op == 'global' ):
+			describe = client.describeGlobal()
+			self.response.out.write( describe )
+			
+		if (op == 'describeAcc'):
+			# describeSObjects returns a list of dictionaries
+			dict = client.describeSObjects('Account')[0]
+			self.response.out.write( '<dl>')
+			for key in dict.keys():
+				self.response.out.write( '<dt>'+ key + '</dt><dd>' 
+										 + str(dict[key]) + '</dd>' )
+				
+				
+		if ( op == 'retrieve' ):
+			query_result = client.query( "select id from Account where name like 'new GAE account%' limit 1")
+			
+			if ( query_result['records'].__len__() < 1 ): 
+				self.response.out.write('no account found with name : new GAE account ')
+			else:
+				accounts = []
+				for account in query_result['records'] :
+					accounts.append( account['Id'] )
+				results = client.retrieve( 'Name,Id','Account', accounts )
+				self.response.out.write( results )
+				
 		# add a back link
 		self.response.out.write('<p /><b><a href="/unittest?sid='+memcache.get("sessionId")+'">back</a></b>' )
 		
