@@ -44,9 +44,9 @@
 	</form>
 	<p/>
 	{% if accounts %}
-	<span class="heading">Found {{ accounts|length }} accounts, select one below:</span>
-	<p/>
+	<span class="heading">Found {{ accounts|length }} accounts:</span>
 	{% endif %}
+	<p/>
 	{% for acct in accounts %}
 		{{ acct.Name }} <a href="javascript:showAccountInfo('{{ acct.Id }}')">[View Info]</a>
 		<br/>
