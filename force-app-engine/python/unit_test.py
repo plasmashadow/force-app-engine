@@ -119,6 +119,14 @@ class UnitTestHandler(RequestHandler):
 			then = datetime(now.year, now.month, now.day-1 )
 			results = client.getUpdated('Account', then, now )
 			self.response.out.write( results )
+		
+		if ( op == 'getUserInfo' ):
+			results = client.getUserInfo( )
+			self.response.out.write( results )
+		
+		
+		if (op == 'describeTabs' ):
+			pass
 			
 		# add a back link
 		self.response.out.write('<p /><b><a href="/unittest?sid='+memcache.get("sessionId")+'">back</a></b>' )
