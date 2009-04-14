@@ -277,7 +277,7 @@ class Client(BaseClient):
         locator = QueryLocator( str(res[_tPartnerNS.queryLocator]) )
         data = dict(queryLocator = locator,
             done = _bool(res[_tPartnerNS.done]),
-            records = [_extractRecord( r )
+            records = [self.extractRecord( r )
                        for r in res[_tPartnerNS.records:]],
             size = int(str(res[_tPartnerNS.size]))
             )
